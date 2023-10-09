@@ -47,7 +47,8 @@ public class Subject {
 
     @Override
     public String toString() {
-        return "Subject [subjectID=" + subjectID + ", marks=" + marks + ", grade=" + grade + "]";
+        //return "Subject [subjectID=" + subjectID + ", marks=" + marks + ", grade=" + grade + "]";
+         return "[ Subject::"+subjectID+" -- mark = "+marks+" -- grade = "+grade+"]";
     }
 
     public String getSubjectID() {

@@ -52,8 +52,22 @@ public class Student implements Serializable {
     }
 
     public void changePassword() {
-        
-        this.password = readPassword();
+        System.out.println("Updating Password");
+        String nPassword = readPassword("New");
+        String cPassword = readPassword("Confirm");
+        while (nPassword.equals(cPassword) == false) {
+            System.out.println("Password does not match - try again");
+            cPassword = readPassword("Confirm");
+        }
+        if (nPassword.equals(cPassword)) {
+            this.password = nPassword;
+        }
+
+    }
+
+    public String readPassword(String action) {
+        System.out.print(action + " Password: ");
+        return Input.readString();
     }
 
     private String readPassword() {
@@ -61,13 +75,26 @@ public class Student implements Serializable {
         return Input.readString();
     }
 
+    public boolean isEnrollmentBelowLimit() {
+        return this.getSubjects().size() < 4;
+    }
+
     public void enrollSubject() {
-        this.subjects.add(new Subject());
-        calculateResult();
+        if (isEnrollmentBelowLimit()) {
+            Subject subject = new Subject();
+            System.out.println("Enrolling in Subject - " + subject.getSubjectID());
+            this.subjects.add(subject);
+            System.out.println("You are now enrolled in " + this.getSubjects().size()
+                    + " out of 4 subjects");
+            calculateResult();
+        } else {
+            System.out.println("Students are allowed to enroll in 4 subjects only");
+        }
     }
 
     public void removeSubject(String subjectID) {
         int index = -1;
+        System.out.println("Dropping Subject - " + subjectID);
         for (int i = 0; i < this.subjects.size(); i++) {
             if (this.subjects.get(i).getSubjectID().equals(subjectID)) {
                 index = i;
@@ -75,7 +102,19 @@ public class Student implements Serializable {
             }
         }
         this.subjects.remove(index);
+        System.out.println("You are now enrolled in " + this.getSubjects().size()
+                + " out of 4 subjects");
         calculateResult();
+    }
+
+    public void removeSubject() {
+        System.out.print("Remove Subject by ID: ");
+        String subId = Input.readString();
+        removeSubject(subId);
+    }
+
+    public void showSubjects() {
+        this.getSubjects().forEach(System.out::println);
     }
 
     public void calculateResult() {
@@ -105,20 +144,20 @@ public class Student implements Serializable {
                     changePassword();
                     break;
                 case 'e':
-                    withdraw();
+                    enrollSubject();
                     break;
                 case 'r':
-                    transfer();
+                    removeSubject();
                     break;
                 case 's':
-                    show();
+                    showSubjects();
                     break;
                 default:
                     help();
                     break;
             }
         }
-        System.out.println("Back to Bank menu");
+        System.out.println("Back to Main Menu");
     }
 
     private void help() {
