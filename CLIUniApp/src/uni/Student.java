@@ -135,7 +135,7 @@ public class Student implements Serializable {
         return Input.readCharacter();
     }
 
-    public void studentMenu() {
+    public void studentSubMenu() {
         System.out.println(this.name + " The Student Course System : ");
         char c;
         while ((c = readChoice()) != 'x') {
@@ -158,6 +158,10 @@ public class Student implements Serializable {
             }
         }
         System.out.println("Back to Main Menu");
+    }
+
+    public void studentMainMenu(){
+        
     }
 
     private void help() {
