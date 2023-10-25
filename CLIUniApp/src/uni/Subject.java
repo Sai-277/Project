@@ -1,8 +1,9 @@
 package uni;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Subject {
+public class Subject implements Serializable {
 
     private String subjectID;
     private int marks;

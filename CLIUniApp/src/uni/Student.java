@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
+
+import utils.CredentialValidator;
 import utils.Input;
+
 
 public class Student implements Serializable {
 
-    private Set<String> unqiueIdValidation = new HashSet<>();
     private String studentId;
     private String name;
     private String email;
@@ -20,17 +21,13 @@ public class Student implements Serializable {
     private char courseResult;
 
     public Student() {
-        this.studentId = generateStudentId();
         this.subjects = new ArrayList<>();
     }
 
-    private String generateStudentId() {
-        String id = generateId();
-        while (unqiueIdValidation.contains(id)) {
-            id = generateId();
-        }
-        unqiueIdValidation.add(id);
-        return id;
+    public boolean uniqueStudentIdValidation(String Id) {
+        List<Student> studentList = University.studentList;
+        if (studentList.stream().noneMatch(st -> st.getStudentId().equals(Id))) return true;
+        else return false;
     }
 
     public char getCourseResult() {
@@ -41,15 +38,6 @@ public class Student implements Serializable {
         this.courseResult = courseResult;
     }
 
-    public String generateId() {
-        int id = new Random().nextInt(1000000);
-        String studentID = Integer.toString(id);
-        while (studentID.length() < 6) {
-            studentID = "0" + studentID;
-        }
-        return studentID;
-
-    }
 
     public void changePassword() {
         System.out.println("Updating Password");
@@ -67,11 +55,16 @@ public class Student implements Serializable {
 
     public String readPassword(String action) {
         System.out.print(action + " Password: ");
-        return Input.readString();
+        String password = Input.readString();
+        while(!CredentialValidator.validatePassword(password)){
+            System.out.println("Incorrect Password Format");
+            password = Input.readString();
+        }
+        return password;
     }
 
     private String readPassword() {
-        System.out.println("Enter the Passowrd");
+        System.out.print("Enter the Password");
         return Input.readString();
     }
 
@@ -94,27 +87,37 @@ public class Student implements Serializable {
 
     public void removeSubject(String subjectID) {
         int index = -1;
-        System.out.println("Dropping Subject - " + subjectID);
         for (int i = 0; i < this.subjects.size(); i++) {
             if (this.subjects.get(i).getSubjectID().equals(subjectID)) {
                 index = i;
                 break;
             }
         }
-        this.subjects.remove(index);
+        if (index == -1){
+            System.out.println("Please enter valid Subject Id");}
+        else{
+            System.out.println("Dropping Subject - " + subjectID);
+            this.subjects.remove(index);}
         System.out.println("You are now enrolled in " + this.getSubjects().size()
                 + " out of 4 subjects");
         calculateResult();
     }
 
     public void removeSubject() {
+        if(this.subjects.size() ==0){
+            System.out.println("Before dropping subjects, Please enroll into the subjects");
+            return;
+        }
         System.out.print("Remove Subject by ID: ");
         String subId = Input.readString();
         removeSubject(subId);
     }
 
     public void showSubjects() {
-        this.getSubjects().forEach(System.out::println);
+        if ((this.getSubjects() == null) || (this.getSubjects().size() == 0))
+            System.out.println("You have enrolled in 0 subjects");
+        else
+            this.getSubjects().forEach(System.out::println);
     }
 
     public void calculateResult() {
@@ -130,15 +133,17 @@ public class Student implements Serializable {
         }
     }
 
-    private char readChoice() {
-        System.out.println("Student Course Menu (c/e/r/s/x)");
+    private char readSubMenuChoice() {
+        System.out.print("Student Course Menu (c/e/r/s/x)");
         return Input.readCharacter();
     }
+
+
 
     public void studentSubMenu() {
         System.out.println(this.name + " The Student Course System : ");
         char c;
-        while ((c = readChoice()) != 'x') {
+        while ((c = readSubMenuChoice()) != 'x') {
             switch (c) {
                 case 'c':
                     changePassword();
@@ -153,18 +158,14 @@ public class Student implements Serializable {
                     showSubjects();
                     break;
                 default:
-                    help();
+                    subMenuHelp();
                     break;
             }
         }
         System.out.println("Back to Main Menu");
     }
 
-    public void studentMainMenu(){
-        
-    }
-
-    private void help() {
+    private void subMenuHelp() {
         System.out.println("Student Course Menu Options");
         System.out.println("c = change password");
         System.out.println("e = enroll");
@@ -172,6 +173,9 @@ public class Student implements Serializable {
         System.out.println("s = show");
         System.out.println("x = exit");
     }
+
+
+
 
     @Override
     public String toString() {
