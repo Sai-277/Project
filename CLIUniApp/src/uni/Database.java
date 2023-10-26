@@ -1,13 +1,10 @@
 package uni;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -31,7 +28,7 @@ public class Database {
                 objOut.close();
                 fileOut.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Reading Error", e);
             }
         }
     }
@@ -45,29 +42,29 @@ public class Database {
             objOut.close();
             fileOut.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Reading Error", e);
         }
     }
 
     public static List<Student> read() {
-        List<Student> temp = null;
+        List<Student> studentList = null;
         File file = new File(path);
         try {
             FileInputStream fileIn = new FileInputStream(file);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
             Object data = objIn.readObject();
             if (data != null)
-                temp = (List) data;
+                studentList = (List) data;
             fileIn.close();
             objIn.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }  catch (FileNotFoundException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "File Not Found", ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, "Reading Error", ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return temp;
+        return studentList;
     }
 
 }
