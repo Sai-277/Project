@@ -11,12 +11,13 @@ import java.util.List;
 
 public class Database {
 
-    private static String path = "D:\\UTS\\Sem-2\\FSD\\Assignment\\Assign_part-2\\Project\\CLIUniApp\\src\\data\\Student.data";
+    private static final String path = "D:\\UTS\\Sem-2\\FSD\\Assignment\\Assign_part-2\\Project\\CLIUniApp\\src\\data\\Student.data";
 
 
     static {
         initialize();
     }
+    public Database(){}
     public static void initialize() {
         File file = new File(path);
 
@@ -54,14 +55,16 @@ public class Database {
         try {
             FileInputStream fileIn = new FileInputStream(file);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
-            temp = (List) objIn.readObject();
+            Object data = objIn.readObject();
+            if (data != null)
+                temp = (List) data;
             fileIn.close();
             objIn.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return temp;

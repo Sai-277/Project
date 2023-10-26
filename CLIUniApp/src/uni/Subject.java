@@ -18,11 +18,11 @@ public class Subject implements Serializable {
 
     private String generateSubjectId() {
         int id = new Random().nextInt(1000);
-        String studentId = Integer.toString(id);
+        StringBuilder studentId = new StringBuilder(Integer.toString(id));
         while (studentId.length() < 3) {
-            studentId = "0" + studentId;
+            studentId.insert(0, "0");
         }
-        return studentId;
+        return studentId.toString();
     }
 
     public void assignMarks() {

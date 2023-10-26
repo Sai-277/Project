@@ -1,14 +1,11 @@
 package uni;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-
-
 import utils.CredentialValidator;
 import utils.Input;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Student implements Serializable {
@@ -18,23 +15,22 @@ public class Student implements Serializable {
     private String email;
     private String password;
     private List<Subject> subjects;
-    private char courseResult;
+    private String courseResult;
+
+    private String courseGrade;
+
+    private float courseMarks;
 
     public Student() {
         this.subjects = new ArrayList<>();
     }
 
-    public boolean uniqueStudentIdValidation(String Id) {
-        List<Student> studentList = University.studentList;
-        if (studentList.stream().noneMatch(st -> st.getStudentId().equals(Id))) return true;
-        else return false;
-    }
 
-    public char getCourseResult() {
+    public String getCourseResult() {
         return courseResult;
     }
 
-    public void setCourseResult(char courseResult) {
+    public void setCourseResult(String courseResult) {
         this.courseResult = courseResult;
     }
 
@@ -43,13 +39,11 @@ public class Student implements Serializable {
         System.out.println("Updating Password");
         String nPassword = readPassword("New");
         String cPassword = readPassword("Confirm");
-        while (nPassword.equals(cPassword) == false) {
+        while (!nPassword.equals(cPassword)) {
             System.out.println("Password does not match - try again");
             cPassword = readPassword("Confirm");
         }
-        if (nPassword.equals(cPassword)) {
-            this.password = nPassword;
-        }
+        this.password = nPassword;
 
     }
 
@@ -63,10 +57,6 @@ public class Student implements Serializable {
         return password;
     }
 
-    private String readPassword() {
-        System.out.print("Enter the Password");
-        return Input.readString();
-    }
 
     public boolean isEnrollmentBelowLimit() {
         return this.getSubjects().size() < 4;
@@ -79,7 +69,8 @@ public class Student implements Serializable {
             this.subjects.add(subject);
             System.out.println("You are now enrolled in " + this.getSubjects().size()
                     + " out of 4 subjects");
-            calculateResult();
+            calculateCourseResult();
+            calculateCourseGrade();
         } else {
             System.out.println("Students are allowed to enroll in 4 subjects only");
         }
@@ -100,11 +91,12 @@ public class Student implements Serializable {
             this.subjects.remove(index);}
         System.out.println("You are now enrolled in " + this.getSubjects().size()
                 + " out of 4 subjects");
-        calculateResult();
+        calculateCourseResult();
+        calculateCourseGrade();
     }
 
     public void removeSubject() {
-        if(this.subjects.size() ==0){
+        if(this.subjects.isEmpty()){
             System.out.println("Before dropping subjects, Please enroll into the subjects");
             return;
         }
@@ -114,25 +106,41 @@ public class Student implements Serializable {
     }
 
     public void showSubjects() {
-        if ((this.getSubjects() == null) || (this.getSubjects().size() == 0))
+        if ((this.getSubjects() == null) || (this.getSubjects().isEmpty()))
             System.out.println("You have enrolled in 0 subjects");
         else
             this.getSubjects().forEach(System.out::println);
     }
 
-    public void calculateResult() {
+    public void calculateCourseResult() {
         int totalMarks = 0;
         for (Subject s : this.subjects) {
             totalMarks += s.getMarks();
         }
+
         float averageMarks = totalMarks * 1f / this.subjects.size();
+        this.courseMarks = averageMarks;
         if (averageMarks < 50) {
-            this.courseResult = 'F';
+            this.courseResult = "FAIL";
         } else {
-            this.courseResult = 'P';
+            this.courseResult = "PASS";
         }
     }
 
+
+    public void calculateCourseGrade() {
+        if (this.courseMarks < 50) {
+            this.courseGrade = "Z";
+        } else if (this.courseMarks < 65) {
+            this.courseGrade = "P";
+        } else if (this.courseMarks < 75) {
+            this.courseGrade = "C";
+        } else if (this.courseMarks < 85) {
+            this.courseGrade = "D";
+        } else {
+            this.courseGrade = "HD";
+        }
+    }
     private char readSubMenuChoice() {
         System.out.print("Student Course Menu (c/e/r/s/x)");
         return Input.readCharacter();
@@ -175,12 +183,34 @@ public class Student implements Serializable {
     }
 
 
-
-
     @Override
     public String toString() {
-        return "Student [studentId=" + studentId + ", name=" + name + ", email=" + email + ", password=" + password
-                + ", subjects=" + subjects + "]";
+        return "Student{" +
+                "studentId='" + studentId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", subjects=" + subjects +
+                ", courseResult=" + courseResult +
+                ", courseGrade=" + courseGrade +
+                ", courseMarks=" + courseMarks +
+                '}';
+    }
+
+    public String getcourseGrade() {
+        return courseGrade;
+    }
+
+    public void setcourseGrade(String courseGrade) {
+        this.courseGrade = courseGrade;
+    }
+
+    public float getcourseMarks() {
+        return courseMarks;
+    }
+
+    public void setcourseMarks(float courseMarks) {
+        this.courseMarks = courseMarks;
     }
 
     public String getStudentId() {

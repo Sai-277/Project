@@ -4,10 +4,11 @@ import utils.CredentialValidator;
 import utils.Input;
 
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
-public class University {
+public class University implements Serializable {
 
     public static List<Student> studentList = null;
 
@@ -41,7 +42,7 @@ public class University {
     }
 
     private void adminMenu() {
-
+        new Admin().adminMenu();
     }
 
     private void studentMainMenu() {
